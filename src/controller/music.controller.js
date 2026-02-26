@@ -52,7 +52,12 @@ export const createAlbum = async (req, res) => {
 };
 
 export const getAllMusics = async (req, res) => {
-  const musics = await Music.find().populate("artist","name email");
+  const musics = await Music.find().limit(10).populate("artist","name email");
+
+  return res.send(musics);
+};
+export const getAllAlbums = async (req, res) => {
+  const musics = await Album.find().populate("artist","name email");
 
   return res.send(musics);
 };
