@@ -7,8 +7,8 @@ import { connectDb } from "./db/db.js";
 connectDb()
   .then(() => {
     console.log("database connected successfully");
-    app.listen(port, () => {
-      console.log(`server running at ${PORT || port}`);
+    app.listen(PORT, () => {
+      console.log(`server running at ${PORT}`);
     });
   })
   .catch((err) => {
