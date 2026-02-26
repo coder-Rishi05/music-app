@@ -1,8 +1,11 @@
 import Music from "../model/model.music.js";
+import uploadFile from "../services/storage.service.js";
 
 export const create = async (req, res) => {
   try {
-    const { name, uri, artist } = req.body;
+    const { title } = req.body;
+    const file = req.file;
+    console.log(req.user._id);
 
     const userRole = req.user.role;
 
@@ -12,10 +15,12 @@ export const create = async (req, res) => {
         .json({ message: "You are not allowed to create music" });
     }
 
+    const result = await uploadFile(file.buffer.toString("base64"));
+
     const music = await Music.create({
-      name,
-      uri,
-      artist,
+      name:title,
+      uri: result.url,
+      artist: req.user._id,
     });
 
     return res.status(201).json({ message: "music created sucessfuly", music });
