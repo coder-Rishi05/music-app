@@ -26,3 +26,30 @@ export const auth = async (req, res, next) => {
     return res.status(500).json({ message: "server error" });
   }
 };
+
+export const authUser = async (req, res, next) => {
+  const token = req.cookies.token;
+  try {
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    const decoded = await jwt.verify(token, JWT_SECRET);
+
+    if (!decoded) {
+      return res.status(403).json({ message: "user not authenticated" });
+    }
+
+    const user = await User.findById({ _id: decoded.id });
+
+    if (decoded.role !== "user") {
+      return res.status(403).json({ message: "you dont have access" });
+    }
+
+    req.user = user;
+
+    next();
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+};

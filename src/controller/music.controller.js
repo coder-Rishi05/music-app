@@ -1,3 +1,4 @@
+import Album from "../model/album.model.js";
 import Music from "../model/model.music.js";
 import uploadFile from "../services/storage.service.js";
 
@@ -18,7 +19,7 @@ export const create = async (req, res) => {
     const result = await uploadFile(file.buffer.toString("base64"));
 
     const music = await Music.create({
-      name:title,
+      name: title,
       uri: result.url,
       artist: req.user._id,
     });
@@ -30,4 +31,28 @@ export const create = async (req, res) => {
   }
 };
 
-export const getMusic = async (req, res) => {};
+export const createAlbum = async (req, res) => {
+  console.log(req);
+  try {
+    const { title, musics } = req.body;
+
+    const album = await Album.create({
+      title,
+      artist: req.user.id,
+      musics: musics,
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Album create successfully", album });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "server error" });
+  }
+};
+
+export const getAllMusics = async (req, res) => {
+  const musics = await Music.find().populate("artist","name email");
+
+  return res.send(musics);
+};
